@@ -19,7 +19,7 @@ RUN apt-get update && \
                        zlib1g-dev \
                        wget
 
-RUN pip3 install --upgrade pip
+
 RUN pip3 install --upgrade scipy numpy \
   && pip3 install future futures pandas pomegranate pyfaidx pysam scikit-learn hmmlearn==0.2.1 \
   && pip3 install cnvkit==$cnvkit_version
