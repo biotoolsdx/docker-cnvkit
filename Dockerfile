@@ -23,12 +23,13 @@ RUN apt-get update && \
 RUN pip3 install --upgrade scipy numpy \
   && pip3 install pandas pomegranate pyfaidx pysam scikit-learn hmmlearn==0.2.1 \
   && pip3 install cnvkit==$cnvkit_version
-RUN Rscript -e "install.packages('https://bioconductor.org/packages/release/bioc/src/contrib/DNAcopy_1.58.0.tar.gz')"
-RUN Rscript -e "install.packages('https://www-stat.stanford.edu/~tibs/cghFLasso_files/cghFLasso_0.1-1.tar.gz')"
+COPY . /tmp/
+RUN Rscript -e "install.packages('/tmp/DNAcopy_1.60.0.tar.gz')"
+RUN Rscript -e "install.packages('/tmp/cghFLasso_0.1-1.tar.gz')"
 
 
 
-RUN rm -rf /tmp/pip* && \
+RUN rm -rf /tmp/.* /tmp/* && \
     apt-get clean && \
     apt-get --yes remove python-pip wget
 
