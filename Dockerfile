@@ -24,8 +24,8 @@ RUN pip3 install --upgrade scipy numpy \
   && pip3 install pandas pomegranate pyfaidx pysam scikit-learn hmmlearn==0.2.1 \
   && pip3 install cnvkit==$cnvkit_version && mkdir /tmp/test
 COPY . /tmp/test/
-RUN Rscript -e "install.packages('/tmp/DNAcopy_1.60.0.tar.gz')"
-RUN Rscript -e "install.packages('/tmp/cghFLasso_0.1-1.tar.gz')"
+RUN Rscript -e "install.packages('/tmp/test/DNAcopy_1.60.0.tar.gz')"
+RUN Rscript -e "install.packages('/tmp/test/cghFLasso_0.1-1.tar.gz')"
 
 RUN useradd -r -u 1003 test
 
