@@ -19,7 +19,6 @@ on:
 
 env:
   IMAGE_NAME: cnvkit
-  DOCKER_HUB_USER: btrspg
   DOCKER_REP_NAME: biotoolsdx
 
 jobs:
