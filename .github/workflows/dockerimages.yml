@@ -1,0 +1,64 @@
+name: Docker
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - v*
+    path-ignore:
+      - readme.md
+  pull_request:
+    branches:
+      - master
+    path-ignore:
+      - readme.md
+  release:
+    types: [published,prereleased]
+
+
+env:
+  IMAGE_NAME: cnvkit
+  DOCKER_HUB_USER: btrspg
+  DOCKER_REP_NAME: biotoolsdx
+
+jobs:
+  test:
+    runs-on: [ubuntu-latest]
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Run tests
+        run: |
+          sentieon_version=$(cat VERSION|sed -e 's/\n//')
+          docker build . --build-arg cnvkit_version=$sentieon_version --file Dockerfile
+
+  push:
+    # Ensure test job passes before pushing image.
+    needs: test
+
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build image
+        run: |
+          docker build . --file Dockerfile -t ${IMAGE_NAME}
+      - name: Log into registry
+        run: echo "${{ secrets.dockerhub_token }}" | docker login  -u ${{ secrets.dockerhub_user }} --password-stdin
+
+      - name: Push image
+        run: |
+          IMAGE_ID=$DOCKER_REP_NAME/${IMAGE_NAME}
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "master" ] && VERSION=latest
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
+
+

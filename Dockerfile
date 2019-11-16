@@ -32,5 +32,5 @@ RUN Rscript -e "install.packages('/tmp/cghFLasso_0.1-1.tar.gz')"
 RUN rm -rf /tmp/.* /tmp/* && \
     apt-get clean && \
     apt-get --yes remove python-pip wget
-
+RUN useradd -r -u 1003 test
 CMD cnvkit.py
